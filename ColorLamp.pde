@@ -18,16 +18,24 @@ void setup()	{
 }
 
 void loop() 	{
-	int * color1;
-	int * color2;
-	color1 = genColor(led1,minDistance);
-	color2 = genColor(led2,minDistance);
+	int * color;
+	int color1[3],color2[3];
 	
-	Serial << "target 1: " << color1[0] << "-" << color1[1] << "-" << color1[2] << endl;
-	Serial << "target 2: " << color2[0] << "-" << color2[1] << "-" << color2[2] << endl;
+	color = genColor(led1,minDistance);
+	for(int i=0;i<3;i++)	{
+			color1[i] = color[i];
+	}
+	
+	color = genColor(led2,minDistance);
+	for(int i=0;i<3;i++)	{
+			color2[i] = color[i];
+	}		
+	
+	// Serial << "target 1: " << color1[0] << "-" << color1[1] << "-" << color1[2] << endl;
+	// Serial << "target 2: " << color2[0] << "-" << color2[1] << "-" << color2[2] << endl;
 	
 	led1.fadeRGB(color1[0],color1[1],color1[2],fadeSpeed);
-	led2.fadeRGB(color2[0],color2[1],color2[2],fadeSpeed);
+	led2.fadeRGB(color1[0],color1[1],color1[2],fadeSpeed);
 	
 	Serial << "Done!" << endl << endl;
 	
