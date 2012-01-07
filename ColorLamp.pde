@@ -6,50 +6,53 @@ RgbLed led2 = RgbLed(6,5,3);
 
 byte battery_probe = A0;
 
-int RGB_status[] = {0,0,0};
-int RGB_target[3];
-int minDistance=150;
-
-long distSq;
-
 // bool rxComplete = false;
 // byte rx[] = {0,0,0};
 
 void setup()	{
+	digitalWrite(13,HIGH);
 	Serial.begin(115200);
 	randomSeed(analogRead(battery_probe));
-	
-	delay(100);
+	delay(500);
 	
 	Serial << "Battery voltage: " << (float)analogRead(battery_probe)/1024*5 << endl;
-
+	digitalWrite(13,LOW);
 	//led1.setMaxLum(200,200,200);
 }
 
 void loop() 	{
 	
-	do {
-		for (int i=0; i<3; i++)	{
-			RGB_target[i] = random(0,255); // TODO!
-		}
-		Serial << "try: " << RGB_target[0] << "-" << RGB_target[1] << "-" << RGB_target[2] << endl;
-		distSq = pow((RGB_target[0] - led1.getStatus()[0]),2) + pow((RGB_target[1]-led1.getStatus()[1]),2) + pow((RGB_target[2]-led1.getStatus()[2]),2);
-		Serial << "try - distance: " << sqrt(distSq) << endl;
-	} 
-	while (distSq < pow(minDistance,2));
+	genColor(led1,150);
 	
-	Serial << "Found!" << endl;
-	Serial << "RGB status: " << led1.getStatus()[0] << "-" << led1.getStatus()[1] << "-" << led1.getStatus()[2] << endl;	
-	Serial << "RGB target: " << RGB_target[0] << "-" << RGB_target[1] << "-" << RGB_target[2] << endl;
-	Serial << "Distance: " << sqrt(distSq) << endl;
-	
-	led1.fadeRGB(RGB_target[0],RGB_target[1],RGB_target[2],50);
+	// led1.fadeRGB(RGB_target[0],RGB_target[1],RGB_target[2],50);
 	
 	Serial << "Done!" << endl;
 	// meetAndroid.send("Done");
-	distSq = 0;
+	// distSq = 0;
 	
 	delay(5000);
+}
+
+int * genColor(RgbLed led, int minDistance){
+	int color[3];
+	long distSq;
+	
+	do {
+		for (int i=0; i<3; i++)	{
+			color[i] = random(led.getMinLum()[i],led.getMaxLum()[i]);
+		}
+		
+		distSq = pow((color[0] - led.getStatus()[0]),2);
+		distSq += pow((color[1]-led.getStatus()[1]),2);
+		distSq += pow((color[2]-led.getStatus()[2]),2);
+		
+	} 
+	while (distSq < pow(minDistance,2));
+	
+	Serial << "RGB status: " << led.getStatus()[0] << "-" << led.getStatus()[1] << "-" << led.getStatus()[2] << endl;	
+	Serial << "RGB target: " << color[0] << "-" << color[1] << "-" << color[2] << endl;
+	Serial << "Distance: " << sqrt(distSq) << endl << endl;
+	
 }
 
 // void serialEvent() {
