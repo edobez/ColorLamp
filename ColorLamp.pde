@@ -7,7 +7,7 @@ RgbLed led2 = RgbLed(6,5,3);
 byte battery_probe = A0;
 
 int minDistance = 150;
-int fadeSpeed = 30;
+int fadeSpeed = 50;
 
 void setup()	{
 	Serial.begin(115200);
@@ -39,7 +39,7 @@ void loop() 	{
 	
 	Serial << "Done!" << endl << endl;
 	
-	delay(5000);
+	delay(15000);
 }
 
 int * genColor(RgbLed led, int minDistance){
