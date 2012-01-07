@@ -3,9 +3,17 @@
 
 RgbLed led1 = RgbLed(11,10,9);
 RgbLed led2 = RgbLed(6,5,3);
+
 byte battery_probe = A0;
-bool rxComplete = false;
-byte rx[] = {0,0,0};
+
+int RGB_status[] = {0,0,0};
+int RGB_target[3];
+int minDistance=150;
+
+long distSq;
+
+// bool rxComplete = false;
+// byte rx[] = {0,0,0};
 
 void setup()	{
 	Serial.begin(115200);
@@ -20,69 +28,47 @@ void setup()	{
 
 void loop() 	{
 	
-	// led1.on();
-	// led2.on();
-	// Serial << "Led ON" << endl;
-	// delay(2000);	
-	// 
-	// led1.set(1,0,0);
-	// led2.set(1,0,0);
-	// Serial << "Led R ON" << endl;
-	// delay(2000);
-	// 
-	// led1.set(0,1,0);
-	// led2.set(0,1,0);
-	// Serial << "Led G ON" << endl;
-	// delay(2000);
-	// 
-	// led1.set(0,0,1);
-	// led2.set(0,0,1);
-	// Serial << "Led B ON" << endl;
-	// delay(2000);
+	do {
+		for (int i=0; i<3; i++)	{
+			RGB_target[i] = random(0,255); // TODO!
+		}
+		Serial << "try: " << RGB_target[0] << "-" << RGB_target[1] << "-" << RGB_target[2] << endl;
+		distSq = pow((RGB_target[0] - led1.getStatus()[0]),2) + pow((RGB_target[1]-led1.getStatus()[1]),2) + pow((RGB_target[2]-led1.getStatus()[2]),2);
+		Serial << "try - distance: " << sqrt(distSq) << endl;
+	} 
+	while (distSq < pow(minDistance,2));
 	
-	if(rxComplete)	{
-		Serial << rx[0] << "," << rx[1] << "," << rx[2] << endl;
-		
-		byte rx[] = {0,0,0};
-		rxComplete = false;
-	}	
+	Serial << "Found!" << endl;
+	Serial << "RGB status: " << led1.getStatus()[0] << "-" << led1.getStatus()[1] << "-" << led1.getStatus()[2] << endl;	
+	Serial << "RGB target: " << RGB_target[0] << "-" << RGB_target[1] << "-" << RGB_target[2] << endl;
+	Serial << "Distance: " << sqrt(distSq) << endl;
 	
-	if(led1.setRGB(255,255,255))	{
-		int * a = led1.getStatus();
-		Serial << "Led set: " << a[0] << "-" << a[1] << "-" << a[2] << endl;
-	}
-	delay(2000);
+	led1.fadeRGB(RGB_target[0],RGB_target[1],RGB_target[2],50);
 	
-	// if(led1.fadeRGB(20,100,100,50))	{
-	// 	int * b = led1.getTarget();
-	// 	Serial << "Led fade to: " << b[0] << "-" << b[1] << "-" << b[2] << endl;
-	// }
-	// delay(2000);
+	Serial << "Done!" << endl;
+	// meetAndroid.send("Done");
+	distSq = 0;
 	
-	// led1.off();
-	// led2.off();
-	// Serial << "Led OFF" << endl;
-	// delay(2000);
-	
+	delay(5000);
 }
 
-void serialEvent() {
-	byte i = 0;
-	byte temp = 0;
-  while (Serial.available()) {
-    // get the new byte:
-    	char inChar = (char)Serial.read();
-		if (inChar == ',') {
-			i++;
-			continue;
-		}
-		rx[i] += ins\
-    // add it to the inputString:
-    // inputString += inChar;
-    // if the incoming character is a newline, set a flag
-    // so the main loop can do something about it:
-    if (inChar == '\n') {
-    	rxComplete = true;
-     } 
-  }
-}
+// void serialEvent() {
+// 	byte i = 0;
+// 	byte temp = 0;
+//   while (Serial.available()) {
+//     // get the new byte:
+//     	char inChar = (char)Serial.read();
+// 		if (inChar == ',') {
+// 			i++;
+// 			continue;
+// 		}
+// 		rx[i] += ins\
+//     // add it to the inputString:
+//     // inputString += inChar;
+//     // if the incoming character is a newline, set a flag
+//     // so the main loop can do something about it:
+//     if (inChar == '\n') {
+//     	rxComplete = true;
+//      } 
+//   }
+// }
