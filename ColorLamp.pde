@@ -1,14 +1,19 @@
 #include <RGBLEDHelper.h>
 #include <Streaming.h>
+#include <Bounce.h>
 
 RgbLed led1 = RgbLed(11,10,9);
 RgbLed led2 = RgbLed(6,5,3);
 
+Bounce but = Bounce(2,5);
+
 byte battery_probe = A0;
 
-int minDistance = 100;
-int diagDistance = 20;
+int minDistance = 150;
+int diagDistance = 5;
 int fadeSpeed = 50;
+
+// byte colCount[256][3] = {0};
 
 void setup()	{
 	Serial.begin(115200);
@@ -18,7 +23,7 @@ void setup()	{
 	led2.setMinLum(15,15,15);
 	
 	led1.setMaxLum(255,255,255);		//optional
-	led2.setMaxLum(255,255,255);		//optional
+	led2.setMaxLum(255,240,240);		//optional
 	
 	delay(100);
 	
@@ -28,6 +33,9 @@ void setup()	{
 void loop() 	{
 	int * color;
 	int color1[3],color2[3];
+	
+	but.update();
+	if(but.read() == LOW)	printFrequency(colCount);
 	
 	color = genColor(led1,minDistance, diagDistance);
 	for(int i=0;i<3;i++)	{
@@ -39,15 +47,16 @@ void loop() 	{
 	// 		color2[i] = color[i];
 	// }		
 	
-	// Serial << "target 1: " << color1[0] << "-" << color1[1] << "-" << color1[2] << endl;
-	// Serial << "target 2: " << color2[0] << "-" << color2[1] << "-" << color2[2] << endl;
-	
 	led1.fadeRGB(color1[0],color1[1],color1[2],fadeSpeed);
 	//led2.fadeRGB(color1[0],color1[1],color1[2],fadeSpeed);
 	
 	Serial << "Done!" << endl << endl;
 	
-	delay(10000);
+	// for (int i = 0; i < 3 ; i++)	{
+	// 	colCount[ color1[i] ][i]++;
+	// }
+	
+	delay(500);
 }
 
 int * genColor(RgbLed led, int minDistance, int diagDistance){
@@ -92,6 +101,18 @@ long distSqFromDiag(int color[])	{
 	}
 	
 	return distSq;
+}
+
+void printFrequency(byte c[][3])	{
+	Serial << "\tR\tG\tB" << endl;
+	
+	for (int i = 0; i < 256; i++)	{
+		Serial << i;
+		for (int j = 0; j < 3; j++)	{
+			Serial << "\t" << c[i][j]; 
+		}
+		Serial << endl;
+	}
 }
 
 // void serialEvent() {
