@@ -13,7 +13,7 @@ int minDistance = 150;
 int diagDistance = 5;
 int fadeSpeed = 50;
 
-// byte colCount[256][3] = {0};
+byte colCount[256][3] = {0};
 
 void setup()	{
 	Serial.begin(115200);
@@ -40,23 +40,17 @@ void loop() 	{
 	color = genColor(led1,minDistance, diagDistance);
 	for(int i=0;i<3;i++)	{
 			color1[i] = color[i];
+	}	
+	
+	//led1.fadeRGB(color1[0],color1[1],color1[2],fadeSpeed);
+	
+	//Serial << "Done!" << endl << endl;
+	
+	for (int i = 0; i < 3 ; i++)	{
+		colCount[ color1[i] ][i]++;
 	}
 	
-	// color = genColor(led2,minDistance);
-	// for(int i=0;i<3;i++)	{
-	// 		color2[i] = color[i];
-	// }		
-	
-	led1.fadeRGB(color1[0],color1[1],color1[2],fadeSpeed);
-	//led2.fadeRGB(color1[0],color1[1],color1[2],fadeSpeed);
-	
-	Serial << "Done!" << endl << endl;
-	
-	// for (int i = 0; i < 3 ; i++)	{
-	// 	colCount[ color1[i] ][i]++;
-	// }
-	
-	delay(500);
+	// delay(2);
 }
 
 int * genColor(RgbLed led, int minDistance, int diagDistance){
@@ -79,10 +73,10 @@ int * genColor(RgbLed led, int minDistance, int diagDistance){
 	} 
 	while (distSq < pow(minDistance,2) || distSqDiag < pow(diagDistance,2));
 	
-	Serial << "RGB status: " << led.getStatus()[0] << "-" << led.getStatus()[1] << "-" << led.getStatus()[2] << endl;	
-	Serial << "RGB target: " << color[0] << "-" << color[1] << "-" << color[2] << endl;
-	Serial << "Distance: " << sqrt(distSq) << " - from diag: " << sqrt(distSqDiag) << endl;
-	Serial << "Iterations: " << counter << endl;
+	// Serial << "RGB status: " << led.getStatus()[0] << "-" << led.getStatus()[1] << "-" << led.getStatus()[2] << endl;	
+	// Serial << "RGB target: " << color[0] << "-" << color[1] << "-" << color[2] << endl;
+	// Serial << "Distance: " << sqrt(distSq) << " - from diag: " << sqrt(distSqDiag) << endl;
+	// Serial << "Iterations: " << counter << endl;
 	
 	return color;
 	
@@ -113,6 +107,7 @@ void printFrequency(byte c[][3])	{
 		}
 		Serial << endl;
 	}
+	Serial << endl;
 }
 
 // void serialEvent() {
